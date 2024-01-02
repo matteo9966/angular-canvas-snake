@@ -10,6 +10,8 @@ type SnakeStatus = {
 };
 type GameStatus = {
   refreshTime: number;
+  speed:number;
+  maxSpeed:number;
   snakes: SnakeStatus[];
   fruits: { x: number; y: number }[];
   maxFruits: number;

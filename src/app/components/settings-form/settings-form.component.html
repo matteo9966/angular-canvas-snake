@@ -1,0 +1,17 @@
+<form #form="ngForm" (ngSubmit)="save()">
+  <div class="input-container">
+    speed
+    <mat-slider
+      class="example-margin"
+      [disabled]="false"
+      [max]="maxSpeed"
+      [min]="1"
+      [step]="1"
+      [discrete]="true"
+      [showTickMarks]="true"
+    >
+      <input matSliderThumb name="speed" ngModel />
+    </mat-slider>
+  </div>
+  <button type="submit">SAVE CHANGES</button>
+</form>

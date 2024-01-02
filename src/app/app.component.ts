@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SnakeGameComponent } from './components/snake-game/snake-game.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { SettingsFormComponent } from './components/settings-form/settings-form.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet,SnakeGameComponent,NavbarComponent],
+  imports: [CommonModule, RouterOutlet,SnakeGameComponent,NavbarComponent,SettingsFormComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

@@ -4,7 +4,10 @@ import { CanvasService } from './canvas.service';
 
 const initialStatus: GameStatus = {
   refreshTime: 50,
+  speed: 5,
+  maxSpeed: 20,
   maxFruits: 2,
+
   snakes: [
     {
       blocks: [
@@ -14,7 +17,7 @@ const initialStatus: GameStatus = {
       currentDirection: 'up',
       directionQueue: [],
       id: 'blue',
-      status: 'play',
+      status: 'lost',
       keys: { a: 'left', w: 'up', s: 'down', d: 'right' },
     },
     {
@@ -54,6 +57,8 @@ export class SnakeService {
     return 'play';
   });
 
+  maxSpeed = this.gameStatus().maxSpeed
+
   initCanvas(canvas: HTMLCanvasElement) {
     this.canvasService.initCanvas(canvas);
   }
@@ -63,6 +68,14 @@ export class SnakeService {
   resetGame() {
     this.resetStatus();
     this.animationFrameId && cancelAnimationFrame(this.animationFrameId);
+    this.gameStatus.update((status) => {
+      const snakes = [...status.snakes];
+      snakes.forEach((s) => {
+        s.status = 'play';
+      });
+      status.snakes = snakes;
+      return status;
+    });
     this.animationFrameId = requestAnimationFrame((ts) => this.animate(ts));
   }
 
@@ -97,12 +110,17 @@ export class SnakeService {
     });
     this.animationFrameId && cancelAnimationFrame(this.animationFrameId);
   }
+
   resetStatus() {
     this.gameStatus.set(initialStatus);
   }
 
   animate(timestamp: number) {
-    if (timestamp - this.lastUpdate > this.gameStatus().refreshTime) {
+    if (
+      timestamp - this.lastUpdate >
+      this.gameStatus().refreshTime *
+        (this.gameStatus().maxSpeed - this.gameStatus().speed)
+    ) {
       this.lastUpdate = timestamp;
       this.canvasService.draw(this.gameStatus());
       this.updateSnakesStatusPositions();
@@ -354,6 +372,16 @@ export class SnakeService {
     fruits.splice(fruitIndex, 1);
 
     return fruits;
+  }
+
+  updateGameSpeed(speed: number) {
+    this.gameStatus.update((status) => {
+      if (speed < status.maxSpeed && speed > 0) {
+        status.speed = speed;
+      }
+      console.log(status);
+      return status;
+    });
   }
 }
 
