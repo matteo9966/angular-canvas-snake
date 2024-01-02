@@ -1,0 +1,11 @@
+.spacer{
+    flex-grow:1;
+    flex-basis: auto;
+    display: block;
+}
+
+.actions{
+    margin-right: 3rem;
+    display: flex;
+    gap:1rem;
+}
