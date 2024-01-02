@@ -8,6 +8,7 @@ import {
   NgZone,
   inject,
   ChangeDetectorRef,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -17,9 +18,14 @@ type SnakeStatus = {
   status: 'play' | 'pause' | 'lost';
   directionQueue: Direction[];
   currentDirection: Direction;
-  id: 'blue' | 'red';
+  id: 'blue' | 'red' | 'green' | 'violet';
   blocks: SnakeBlock[];
+  keys: Record<string, Direction>;
 };
+
+function randomInteger(minimum: number, maximum: number) {
+  return Math.floor(Math.random() * (maximum - minimum)) + minimum;
+}
 @Component({
   selector: 'app-snake-game',
   standalone: true,
@@ -40,19 +46,32 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {}
+
+  @HostListener('window:keydown', ['$event.key'])
+  keyDown(eventKey: string) {
+    this.handleDirectionInput(eventKey);
+  }
+
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>;
   context!: CanvasRenderingContext2D;
 
   canvasSettings = {
-    width: 10,
-    height: 10,
+    width: 20,
+    height: 20,
     lineColor: 'red',
     snakeColor: 'green',
+    fruitColor: 'blue',
   };
 
-  gameStatus = signal<{ refreshTime: number; snakes: SnakeStatus[] }>({
-    refreshTime: 100,
+  gameStatus = signal<{
+    refreshTime: number;
+    snakes: SnakeStatus[];
+    fruits: { x: number; y: number }[];
+    maxFruits: number;
+  }>({
+    refreshTime: 50,
+    maxFruits: 2,
     snakes: [
       {
         blocks: [
@@ -65,23 +84,28 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
         directionQueue: [],
         id: 'blue',
         status: 'play',
+        keys: { a: 'left', w: 'up', s: 'down', d: 'right' },
       },
       {
         blocks: [
-          { x: 5, y: 0 },
-          { x: 5, y: 0 },
-          { x: 5, y: 0 },
-          { x: 5, y: 0 },
+          { x: 8, y: 6 },
+          { x: 8, y: 7 },
+          { x: 8, y: 8 },
         ],
-        currentDirection: 'up',
+        currentDirection: 'right',
         directionQueue: [],
-        id: 'blue',
-        status: 'play',
+        id: 'violet',
+        status: 'lost',
+        keys: {
+          arrowup: 'up',
+          arrowdown: 'down',
+          arrowleft: 'left',
+          arrowright: 'right',
+        },
       },
     ],
+    fruits: [],
   });
-
-  snake: SnakeBlock[] = [{ x: 0, y: 0 }];
 
   drawBackgroundVerticalLines() {
     const canvasWidth = this.canvas.nativeElement.width;
@@ -121,20 +145,37 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
     );
   }
 
+  /**
+   * @description updates the snake and checks if it eats the fruit
+   */
   updateSnakesStatusPositions() {
     this.gameStatus.update((currentStatus) => {
       const newStatus = { ...currentStatus };
+      let fruits = [...currentStatus.fruits];
       newStatus.snakes = newStatus.snakes.map((snake) => {
+        if (snake.status !== 'play') return snake;
         const updatedSnake = this.updateSnakeCurrentDirection(snake);
-
+        const fruitEaten = this.checkIfSnakeAteFruit(
+          updatedSnake.blocks,
+          currentStatus.fruits
+        );
+        if (fruitEaten) {
+          fruits = this.removeFruit(fruitEaten, fruits);
+          //dont shift so snake can grow
+        } else {
+          updatedSnake.blocks.shift();
+        }
+        //check if snake eats itself
         return {
           ...updatedSnake,
           blocks: this.moveSnake(
             updatedSnake.blocks,
-            updatedSnake.currentDirection
+            updatedSnake.currentDirection,
+            updatedSnake.status
           ),
         };
       });
+      newStatus.fruits = fruits;
       return newStatus;
     });
   }
@@ -143,11 +184,20 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
     this.gameStatus().snakes.forEach((s) => this.drawSnake(s.blocks));
   }
 
-  enqueueSnakeDirection(direction: Direction, snakeID: 'blue' | 'red') {
+  drawFruit() {
+    this.gameStatus().fruits.forEach(({ x, y }) =>
+      this.drawBlock(x, y, this.canvasSettings.fruitColor)
+    );
+  }
+
+  enqueueSnakeDirection(
+    direction: Direction,
+    snakeID: 'blue' | 'red' | 'green' | 'violet'
+  ) {
     this.gameStatus.update((status) => {
       const newStatus = { ...status };
       const index = newStatus.snakes.findIndex((s) => s.id === snakeID);
-      if (!index) {
+      if (index < 0) {
         return status;
       }
       newStatus.snakes = [...newStatus.snakes];
@@ -156,6 +206,50 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
     });
   }
 
+  handleDirectionInput(key: string) {
+    const snakeIndex = this.gameStatus().snakes.findIndex(
+      (s) => !!s.keys[key.toLowerCase()]
+    );
+
+    if (snakeIndex < 0) {
+      return;
+    }
+
+    const snakeKeys = this.gameStatus().snakes[snakeIndex].keys;
+    const nextDirection = snakeKeys[key.toLowerCase()];
+    if (
+      this.isInvalidDirection(
+        nextDirection,
+        this.gameStatus().snakes[snakeIndex].currentDirection
+      )
+    ) {
+      return;
+    }
+    const snakeId = this.gameStatus().snakes[snakeIndex].id;
+    this.enqueueSnakeDirection(nextDirection, snakeId);
+  }
+
+  isInvalidDirection(
+    nextDirection: Direction,
+    currentDirection: Direction
+  ): boolean {
+    if (
+      nextDirection === currentDirection ||
+      (nextDirection === 'down' && currentDirection === 'up') ||
+      (nextDirection === 'up' && currentDirection === 'down') ||
+      (nextDirection === 'left' && currentDirection === 'right') ||
+      (nextDirection === 'right' && currentDirection === 'left')
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @description get a direction from a queue and add it to the current direction
+   * @param snake
+   * @returns
+   */
   updateSnakeCurrentDirection(snake: SnakeStatus): SnakeStatus {
     if (snake.directionQueue.length <= 0) {
       return snake;
@@ -172,7 +266,7 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
       this.canvas.nativeElement.width / this.canvasSettings.width;
     const blockHeight =
       this.canvas.nativeElement.height / this.canvasSettings.height;
-    this.context.fillStyle = this.canvasSettings.snakeColor;
+    this.context.fillStyle = color;
     this.context.fillRect(
       x * blockWidth,
       y * blockHeight,
@@ -187,17 +281,16 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
     this.clearRect();
     this.drawBackground();
     this.drawSnakes();
-    // this.drawSnake(this.snake);
+    this.drawFruit();
   }
 
   animate(timestamp: number) {
-    // console.log(timestamp, this.lastUpdate, this.gameStatus().refreshTime);
     if (timestamp - this.lastUpdate > this.gameStatus().refreshTime) {
       this.lastUpdate = timestamp;
       this.draw();
       this.updateSnakesStatusPositions();
+      this.updateFruitsGameStatus();
       this.value++;
-      this.cdr.detectChanges();
     }
 
     this.zone.runOutsideAngular(() => {
@@ -205,25 +298,53 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
     });
   }
 
-  moveSnake(snake: SnakeBlock[], direction: Direction): SnakeBlock[] {
+  moveSnake(
+    snake: SnakeBlock[],
+    direction: Direction,
+    status: 'play' | 'lost' | 'pause'
+  ): SnakeBlock[] {
+    if (status !== 'play') {
+      return snake;
+    }
+    const [...updatedSnake] = snake;
     switch (direction) {
-      case 'up':
-        const [_first, ...updatedSnake] = snake;
+      case 'up': {
         const nextY =
           snake[snake.length - 1].y === 0
             ? this.canvasSettings.height - 1
             : snake[snake.length - 1].y - 1;
         updatedSnake.push({ x: snake[snake.length - 1].x, y: nextY });
+
         return updatedSnake;
+      }
+      case 'down': {
+        const nextY =
+          snake[snake.length - 1].y === this.canvasSettings.height - 1
+            ? 0
+            : snake[snake.length - 1].y + 1;
+        updatedSnake.push({
+          x: updatedSnake[updatedSnake.length - 1].x,
+          y: nextY,
+        });
+        return updatedSnake;
+      }
+      case 'left': {
+        const nextX =
+          snake[snake.length - 1].x === 0
+            ? this.canvasSettings.width - 1
+            : snake[snake.length - 1].x - 1;
+        updatedSnake.push({ x: nextX, y: snake[snake.length - 1].y });
 
-      case 'down':
-        return snake;
-
-      case 'left':
-        return snake;
-
-      case 'right':
-        return snake;
+        return updatedSnake;
+      }
+      case 'right': {
+        const nextX =
+          snake[snake.length - 1].x === this.canvasSettings.width - 1
+            ? 0
+            : snake[snake.length - 1].x + 1;
+        updatedSnake.push({ x: nextX, y: snake[snake.length - 1].y });
+        return updatedSnake;
+      }
 
       default:
         return snake;
@@ -241,5 +362,95 @@ export class SnakeGameComponent implements AfterViewInit, OnInit {
 
   log() {
     console.log('change detection');
+  }
+
+  checkCollision(x1: number, y1: number, x2: number, y2: number) {
+    if (x1 == x2 && y1 === y2) {
+      return true;
+    }
+    return false;
+  }
+
+  getRandomBlock() {
+    return {
+      x: randomInteger(0, this.canvasSettings.width),
+      y: randomInteger(0, this.canvasSettings.height),
+    };
+  }
+
+  createFruit() {
+    const MAX_ATTEMPTS = 200;
+    let attempt = 0,
+      x = -1,
+      y = -1;
+    if (
+      this.canvasSettings.height * this.canvasSettings.width <=
+      this.gameStatus().snakes.reduce((prev, s) => s.blocks.length + prev, 0)
+    ) {
+      //no more space
+      return null;
+    }
+    while (attempt < MAX_ATTEMPTS && x < 0 && y < 0) {
+      const block = this.getRandomBlock();
+      let foundCollision = false;
+      for (let snake of this.gameStatus().snakes) {
+        if (this.collisionWithSnake(block, snake.blocks)) {
+          foundCollision = true;
+          break;
+        }
+      }
+      if (!foundCollision) {
+        x = block.x;
+        y = block.y;
+      }
+      attempt++;
+    }
+    return { x, y };
+  }
+
+  collisionWithSnake(block: SnakeBlock, snakeBlocks: SnakeBlock[]) {
+    return snakeBlocks.findIndex((b) => b.x == block.x && b.y == block.y) >= 0;
+  }
+
+  updateFruitsGameStatus() {
+    if (this.gameStatus().fruits.length >= this.gameStatus().maxFruits) {
+      return;
+    }
+    const fruit = this.createFruit();
+    if (!fruit) return;
+    this.gameStatus.update((status) => {
+      status.fruits = [...status.fruits, fruit];
+      return status;
+    });
+  }
+
+  //if snake ate fruit then eati
+  checkIfSnakeAteFruit(snake: SnakeBlock[], fruits: SnakeBlock[]) {
+    for (let fruit of fruits) {
+      if (this.collisionWithSnake(fruit, snake)) {
+        return fruit;
+      }
+    }
+    return null;
+  }
+
+  removeFruit(
+    fruitToRemove: SnakeBlock,
+    currentFruits: SnakeBlock[]
+  ): SnakeBlock[] {
+    const fruitIndex = currentFruits.findIndex(
+      (fruit) => fruit.x === fruitToRemove.x && fruit.y === fruitToRemove.y
+    );
+    if (fruitIndex < 0) {
+      return currentFruits;
+    }
+    const fruits = [...currentFruits];
+    fruits.splice(fruitIndex, 1);
+
+    return fruits;
+  }
+
+  initializeGame() {
+    //update the gameStatus with new keys
   }
 }
