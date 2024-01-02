@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "canvas-snake:build:production"
+              "buildTarget": "canvas-snake:build:production"
             },
             "development": {
-              "browserTarget": "canvas-snake:build:development"
+              "buildTarget": "canvas-snake:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "canvas-snake:build"
+            "buildTarget": "canvas-snake:build"
           }
         },
         "test": {
