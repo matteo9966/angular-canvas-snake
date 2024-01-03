@@ -1,6 +1,6 @@
 <form #form="ngForm" (ngSubmit)="save()">
   <div class="input-container">
-    speed
+    <span class="label"> Speed </span>
     <mat-slider
       class="example-margin"
       [disabled]="false"
@@ -10,8 +10,35 @@
       [discrete]="true"
       [showTickMarks]="true"
     >
-      <input matSliderThumb name="speed" ngModel />
+      <input matSliderThumb name="speed" [(ngModel)]="formValue().speed" />
     </mat-slider>
+  </div>
+  <div class="input-container">
+    <span class="label"> Size </span>
+    <mat-slider
+      class="example-margin"
+      [disabled]="false"
+      [max]="gameSizes[1]"
+      [min]="gameSizes[0]"
+      [step]="1"
+      [discrete]="true"
+      [showTickMarks]="true"
+    >
+      <input matSliderThumb name="size" [(ngModel)]="gameSize" />
+    </mat-slider>
+  </div>
+  <div class="snake-colors">
+    @for( snakeId of snakeIdsAndColors;track snakeId.id){
+    <div class="color-picker" ngModelGroup="snakeColors">
+      <label for="snakeId">{{ snakeId.id }}</label>
+      <input
+        type="color"
+        [id]="snakeId.id"
+        [name]="snakeId.id"
+        [(ngModel)]="snakeId.color"
+      />
+    </div>
+    }
   </div>
   <button type="submit">SAVE CHANGES</button>
 </form>

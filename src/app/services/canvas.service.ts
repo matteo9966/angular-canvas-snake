@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { GameStatus, SnakeBlock, SnakeStatus } from '../types/Types';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CanvasService {
-  canvas!:HTMLCanvasElement
-  context!:CanvasRenderingContext2D;
+  canvas!: HTMLCanvasElement;
+  context!: CanvasRenderingContext2D;
   canvasSettings = {
     width: 20,
     height: 20,
@@ -15,38 +15,59 @@ export class CanvasService {
     fruitColor: 'blue',
   };
 
-  constructor() { }
-  initCanvas(canvas:HTMLCanvasElement){
-    this.canvas=canvas;
-    this.context=this.canvas.getContext('2d')!;
+  constructor() {
+    this.initAppleImage();
   }
 
-  private canvasInitialized(){
-    if(!this.canvas || !this.context){
-      throw new Error('canvas not initialized')
+  imageURL = 'assets/images/apple.svg';
+  appleImage = new Image();
+
+  initAppleImage() {
+    this.appleImage.src = this.imageURL;
+    this.appleImage.onload = () => {
+      console.log('image loaded');
+    };
+  }
+
+  initCanvas(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.context = this.canvas.getContext('2d')!;
+  }
+
+  private canvasInitialized() {
+    if (!this.canvas || !this.context) {
+      throw new Error('canvas not initialized');
     }
   }
 
-  draw(status:GameStatus) {
+  draw(status: GameStatus) {
     this.canvasInitialized();
     this.clearRect();
-    this.drawBackground();
-    this.drawSnakes(status.snakes);
+    this.drawBackground(status);
     this.drawFruit(status.fruits);
+    this.drawSnakes(status.snakes);
   }
 
-  drawSnakes(snakes:SnakeStatus[]) {
-    snakes.forEach((s) => this.drawSnake(s.blocks));
+  drawSnakes(snakes: SnakeStatus[]) {
+    snakes.forEach((s) => this.drawSnake(s));
   }
 
-  drawFruit(fruits:SnakeBlock[]) {
-    fruits.forEach(({ x, y }) =>
-      this.drawBlock(x, y, this.canvasSettings.fruitColor)
-    );
+  drawFruit(fruits: SnakeBlock[]) {
+    fruits.forEach(({ x, y }) => {
+      const blockWidth = this.canvas.width / this.canvasSettings.width;
+      const blockHeight = this.canvas.height / this.canvasSettings.height;
+      this.context.drawImage(
+        this.appleImage,
+        x * blockWidth,
+        y * blockHeight,
+        blockWidth,
+        blockHeight
+      );
+      // this.drawBlock(x, y, this.canvasSettings.fruitColor);
+    });
   }
 
-  private drawBackgroundVerticalLines() {
-    
+  private drawBackgroundVerticalLines(status: GameStatus) {
     const canvasWidth = this.canvas.width;
     const canvasHeight = this.canvas.height;
     const squareWidth = canvasWidth / this.canvasSettings.width;
@@ -60,8 +81,7 @@ export class CanvasService {
     }
   }
 
-  private drawBackgroundHorizontalLines() {
-    
+  private drawBackgroundHorizontalLines(status: GameStatus) {
     const canvasWidth = this.canvas.width;
     const canvasHeight = this.canvas.height;
     const squareHeight = canvasHeight / this.canvasSettings.height;
@@ -75,33 +95,25 @@ export class CanvasService {
     }
   }
 
-   drawBackground() {
-
-    this.drawBackgroundVerticalLines();
-    this.drawBackgroundHorizontalLines();
+  drawBackground(status: GameStatus) {
+    this.drawBackgroundVerticalLines(status);
+    this.drawBackgroundHorizontalLines(status);
   }
 
   clearRect() {
-    this.context.clearRect(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  private drawSnake(snake: SnakeStatus) {
+    snake.blocks.forEach(({ x, y }) =>
+      this.drawBlock(x, y, snake.color || 'green')
     );
   }
 
-  private  drawSnake(snake: SnakeBlock[]) {
-    snake.forEach(({ x, y }) =>
-      this.drawBlock(x, y, this.canvasSettings.snakeColor)
-    );
-  }
-
-  private   drawBlock(x: number, y: number, color: string) {
+  private drawBlock(x: number, y: number, color: string) {
     this.context.beginPath();
-    const blockWidth =
-      this.canvas.width / this.canvasSettings.width;
-    const blockHeight =
-      this.canvas.height / this.canvasSettings.height;
+    const blockWidth = this.canvas.width / this.canvasSettings.width;
+    const blockHeight = this.canvas.height / this.canvasSettings.height;
     this.context.fillStyle = color;
     this.context.fillRect(
       x * blockWidth,
@@ -112,4 +124,8 @@ export class CanvasService {
     this.context.closePath();
   }
 
+  updateSettings(size: number) {
+    this.canvasSettings.height = size;
+    this.canvasSettings.width = size;
+  }
 }

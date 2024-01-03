@@ -4,10 +4,12 @@ import { CanvasService } from './canvas.service';
 
 const initialStatus: GameStatus = {
   refreshTime: 50,
-  speed: 5,
+  speed: 17,
+  size: 10,
   maxSpeed: 20,
-  maxFruits: 2,
-
+  maxSize: 100,
+  minSize: 10,
+  maxFruits: 5,
   snakes: [
     {
       blocks: [
@@ -19,6 +21,7 @@ const initialStatus: GameStatus = {
       id: 'blue',
       status: 'lost',
       keys: { a: 'left', w: 'up', s: 'down', d: 'right' },
+      color: '#ca51c5',
     },
     {
       blocks: [
@@ -35,6 +38,7 @@ const initialStatus: GameStatus = {
         arrowleft: 'left',
         arrowright: 'right',
       },
+      color: '#3f51b5',
     },
   ],
   fruits: [],
@@ -57,7 +61,7 @@ export class SnakeService {
     return 'play';
   });
 
-  maxSpeed = this.gameStatus().maxSpeed
+  maxSpeed = this.gameStatus().maxSpeed;
 
   initCanvas(canvas: HTMLCanvasElement) {
     this.canvasService.initCanvas(canvas);
@@ -94,7 +98,7 @@ export class SnakeService {
   }
 
   initBackground() {
-    this.canvasService.drawBackground();
+    this.canvasService.drawBackground(this.gameStatus());
   }
 
   pauseGame() {
@@ -171,6 +175,7 @@ export class SnakeService {
     snakeID: 'blue' | 'red' | 'green' | 'violet'
   ) {
     this.gameStatus.update((status) => {
+      console.log(direction)
       const newStatus = { ...status };
       const index = newStatus.snakes.findIndex((s) => s.id === snakeID);
       if (index < 0) {
@@ -198,6 +203,7 @@ export class SnakeService {
     return false;
   }
 
+   externalQueue:string[] = [];
   handleDirectionInput(key: string) {
     const snakeIndex = this.gameStatus().snakes.findIndex(
       (s) => !!s.keys[key.toLowerCase()]
@@ -209,6 +215,9 @@ export class SnakeService {
 
     const snakeKeys = this.gameStatus().snakes[snakeIndex].keys;
     const nextDirection = snakeKeys[key.toLowerCase()];
+    this.externalQueue.unshift(nextDirection);
+  
+    console.log({nextDirection,queue:this.externalQueue})
     if (
       this.isInvalidDirection(
         nextDirection,
@@ -231,6 +240,7 @@ export class SnakeService {
       return snake;
     }
     const updatedSnake = { ...snake };
+  
     const newDirection = updatedSnake.directionQueue.pop()!;
     updatedSnake.currentDirection = newDirection;
     return updatedSnake;
@@ -379,9 +389,59 @@ export class SnakeService {
       if (speed < status.maxSpeed && speed > 0) {
         status.speed = speed;
       }
-      console.log(status);
+     
       return status;
     });
+  }
+
+  updateGameSize(size: number) {
+    if (size < this.gameStatus().minSize || size > this.gameStatus().maxSize) {
+      return;
+    }
+    
+    this.gameStatus.update((status) => {
+      const updated = { ...status };
+      updated.size = size;
+      return updated;
+    });
+    this.canvasService.updateSettings(this.gameStatus().size);
+    this.canvasService.draw(this.gameStatus());
+  }
+
+  /**
+   *
+   * @param colors a map of key value where key is the id of the snake and value is the color selected
+   */
+  updateSnakeColors(colors: Record<string, string>) {
+    this.gameStatus.update((status) => {
+      const snakes = [...status.snakes];
+      snakes.forEach((s) => {
+        if (colors[s.id]) {
+          s.color = colors[s.id];
+        }
+      });
+      status.snakes = snakes;
+      return status;
+    });
+    this.canvasService.draw(this.gameStatus());
+  }
+
+  private _snakes = computed(() => this.gameStatus().snakes);
+  private _gameSize = computed(() => this.gameStatus().size);
+  private _gameMinMaxSize = computed(() => [
+    this.gameStatus().minSize,
+    this.gameStatus().maxSize,
+  ]);
+
+  get snakes() {
+    return this._snakes();
+  }
+
+  get gameSize() {
+    return this._gameSize();
+  }
+  get gameMinMaxSize() {
+    return this._gameMinMaxSize();
   }
 }
 

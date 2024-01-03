@@ -1,16 +1,33 @@
-:host{
-    display: block;
+:host {
+  display: block;
 }
 
-form{
-    width: 100%;
+form {
+  width: 100%;
+  padding: 2rem;
 }
 
-.input-container{
-    width:100%;
-    max-width: 800px;
+.input-container {
+  width: 100%;
+  
 }
 
-mat-slider{
-    width:100%;
+mat-slider {
+  width: 100%;
+  max-width: 300px;
+}
+
+.color-picker {
+  display: flex;
+  gap: 20px;
+
+  label {
+    width: 100px;
+  }
+}
+
+.snake-colors {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

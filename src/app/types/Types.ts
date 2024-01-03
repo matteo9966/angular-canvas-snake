@@ -7,11 +7,15 @@ type SnakeStatus = {
   id: 'blue' | 'red' | 'green' | 'violet';
   blocks: SnakeBlock[];
   keys: Record<string, Direction>;
+  color: string;
 };
 type GameStatus = {
+  maxSize: number;
+  minSize: number;
+  size: number;
   refreshTime: number;
-  speed:number;
-  maxSpeed:number;
+  speed: number;
+  maxSpeed: number;
   snakes: SnakeStatus[];
   fruits: { x: number; y: number }[];
   maxFruits: number;
