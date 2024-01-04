@@ -1,0 +1,50 @@
+@use "@angular/material" as mat;
+
+// this function is used to define themes using core-color for themes and core-theme for default color core-color is for overriding
+
+
+
+@mixin themify-mat-components($mat-theme, $is-global: false) {
+    @if $is-global {
+        @include mat.core-theme($mat-theme);
+        @include mat.button-theme($mat-theme);
+        @include mat.toolbar-theme($mat-theme);
+        @include mat.card-theme($mat-theme);
+        @include mat.icon-theme($mat-theme);
+        @include mat.input-theme($mat-theme);
+        @include mat.form-field-theme($mat-theme);
+        @include mat.chips-theme($mat-theme);
+        @include mat.sidenav-theme($mat-theme);
+        @include mat.menu-theme($mat-theme);
+        @include mat.progress-spinner-theme($mat-theme);
+        @include mat.expansion-theme($mat-theme);
+        @include mat.button-toggle-theme($mat-theme);
+        @include mat.select-theme($mat-theme);
+        @include mat.table-theme($mat-theme);
+        @include mat.fab-theme($mat-theme);
+        @include mat.autocomplete-theme($mat-theme);
+        @include mat.tabs-theme($mat-theme);
+        @include mat.checkbox-theme($mat-theme);
+        @include mat.tooltip-theme($mat-theme);
+      } @else {
+        @include mat.tooltip-color($mat-theme);
+        @include mat.checkbox-color($mat-theme);
+        @include mat.tabs-color($mat-theme);
+        @include mat.autocomplete-color($mat-theme);
+        @include mat.fab-color($mat-theme);
+        @include mat.select-color($mat-theme);
+        @include mat.core-color($mat-theme);
+        @include mat.button-color($mat-theme);
+        @include mat.toolbar-color($mat-theme);
+        @include mat.card-color($mat-theme);
+        @include mat.icon-color($mat-theme);
+        @include mat.input-color($mat-theme);
+        @include mat.form-field-color($mat-theme);
+        @include mat.sidenav-color($mat-theme);
+        @include mat.menu-color($mat-theme);
+        @include mat.progress-spinner-color($mat-theme);
+        @include mat.expansion-color($mat-theme);
+        @include mat.button-toggle-color($mat-theme);
+        @include mat.table-color($mat-theme);
+      }
+}

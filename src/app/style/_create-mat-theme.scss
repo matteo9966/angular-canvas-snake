@@ -1,0 +1,52 @@
+@use "@angular/material" as mat;
+@use "sass:map" as map;
+
+// the parameters do not need to be in this specific order just pass them
+/** the primary-map accent-map and warn-map are palettes defined like the material 
+ *  palettes
+ */
+ 
+@function create-material-theme-from-palette(
+  $primary-map: null, 
+  $accent-map: null,
+  $warn-map: null,
+  $type: "light"
+) {
+  $colormap: (); //the color map
+
+  @if $type != "light" and $type != "dark" {
+    @error "property #{$type} must be light or dark";
+  }
+
+  @if $primary-map == null {
+    @error "property primary-map must be defined with a material color map";
+  } @else {
+    $colormap: map.set($colormap, "primary", mat.define-palette($primary-map));
+  }
+
+  @if $accent-map == null {
+    @error "property accent-map must be defined with a material color map";
+  } @else {
+    $colormap: map.set($colormap, "accent", mat.define-palette($accent-map));
+  }
+
+  @if $warn-map == null {
+    $colormap: map.set($colormap, "warn", mat.define-palette(mat.$red-palette));
+  } @else {
+    $colormap: mat.set($colormap, "warn", mat.define-palette($warn-map));
+  }
+
+  @if $type == "light" {
+    @return mat.define-light-theme(
+      (
+        color: $colormap,
+      )
+    );
+  } @else {
+    @return mat.define-dark-theme(
+      (
+        color: $colormap,
+      )
+    );
+  }
+}

@@ -1,5 +1,10 @@
-.game-container{
-    display: flex;
-    justify-content: center;
-    padding-top: 2rem;
+:host {
+  background-image: url("../assets/images/background.avif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: block;
 }

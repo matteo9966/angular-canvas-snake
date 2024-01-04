@@ -1,0 +1,16 @@
+@use "../../style/variables" as v;
+:host {
+  display: block;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.modal-body {
+  background-color: teal;
+  border-radius: 0 0 v.$border-radius v.$border-radius;
+}
+mat-toolbar {
+  border-radius: v.$border-radius v.$border-radius 0 0;
+}

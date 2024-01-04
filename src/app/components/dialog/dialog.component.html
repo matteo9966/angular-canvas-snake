@@ -1,0 +1,27 @@
+<div class="modal-dialog">
+  <mat-toolbar>
+    <span>My App</span>
+    <span class="spacer"></span>
+    <button
+      mat-icon-button
+      class=""
+      (click)="closeDialog()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar>
+  <!-- <div class="modal-header">
+    My Test Dialog
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeDialog()"
+    >
+      CLOSE
+    </button>
+  </div> -->
+  <div class="modal-body">
+    <ng-content></ng-content>
+  </div>
+</div>

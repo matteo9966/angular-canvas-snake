@@ -1,0 +1,7 @@
+@use "@angular/material" as mat;
+$global-font: "'Press Start 2P', system-ui";
+$custom-typography-font: mat.define-typography-config(
+  $font-family: $global-font,
+);
+@include mat.all-component-typographies($custom-typography-font);
+@include mat.typography-hierarchy($custom-typography-font);

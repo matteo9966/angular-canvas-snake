@@ -10,9 +10,10 @@ export class CanvasService {
   canvasSettings = {
     width: 20,
     height: 20,
-    lineColor: 'red',
+    lineColor: '#e1e1e1',
     snakeColor: 'green',
     fruitColor: 'blue',
+    lineWidth:0.3
   };
 
   constructor() {
@@ -73,6 +74,7 @@ export class CanvasService {
     const squareWidth = canvasWidth / this.canvasSettings.width;
     for (let i = 1; i < this.canvasSettings.width; i++) {
       this.context.beginPath();
+      this.context.lineWidth=this.canvasSettings.lineWidth;
       this.context.strokeStyle = this.canvasSettings.lineColor;
       this.context.moveTo(i * squareWidth, 0);
       this.context.lineTo(i * squareWidth, canvasHeight);
@@ -87,6 +89,7 @@ export class CanvasService {
     const squareHeight = canvasHeight / this.canvasSettings.height;
     for (let i = 1; i < this.canvasSettings.height; i++) {
       this.context.beginPath();
+      this.context.lineWidth=this.canvasSettings.lineWidth;
       this.context.strokeStyle = this.canvasSettings.lineColor;
       this.context.moveTo(0, i * squareHeight);
       this.context.lineTo(canvasWidth, i * squareHeight);

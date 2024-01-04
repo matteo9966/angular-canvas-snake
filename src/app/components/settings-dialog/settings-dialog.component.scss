@@ -1,0 +1,6 @@
+@use '../../style/variables' as v;
+
+:host{
+    display: block;
+    border-radius: v.$border-radius;
+}

@@ -1,9 +1,11 @@
 @use "./app/style/material";
 @use "./app/style/reset";
 @use "./app/style/normalize";
-
+@use "../src/app/style/fonts" as f;
+@use "../src/app/style/material-typography";
 html,
 body {
+  @include f.pressToPlayFont;
   height: 100%;
 }
 body {
