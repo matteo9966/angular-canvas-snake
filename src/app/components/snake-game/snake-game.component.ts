@@ -6,6 +6,7 @@ import {
   NgZone,
   inject,
   HostListener,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SnakeService } from 'src/app/services/snake.service';
@@ -30,8 +31,18 @@ export class SnakeGameComponent implements OnInit {
     // requestAnimationFrame((ts) => this.snakeService.animate(ts));
   }
 
+  mouseMoves = signal<string[]>([]);
+  enqueueMoves(move: string) {
+    this.mouseMoves.update((m) => {
+      const moves = /* [...m]; */ m;
+      moves.push(move);
+      return moves;
+    });
+  }
+
   @HostListener('window:keydown', ['$event.key'])
   keyDown(eventKey: string) {
+  
     this.snakeService.handleDirectionInput(eventKey);
   }
 

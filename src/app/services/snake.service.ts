@@ -61,6 +61,31 @@ export class SnakeService {
     return 'play';
   });
 
+  //speed up snakeId Search based on the snake input keys
+  keysHash = computed<Record<string, string>>(() => {
+    let hash = {};
+    const snakes = this.gameStatus().snakes;
+    hash = snakes.reduce<Record<string, string>>((hash, snake) => {
+      const snakeId = snake.id;
+      Object.keys(snake.keys).forEach((k) => {
+        hash[k] = snakeId;
+      });
+      return hash;
+    }, {});
+    return hash;
+  });
+
+  /**
+   * @description uses the computed {key:snakeId} map to get the snakeId
+   * @param key
+   * @returns
+   */
+  getSnakeIdBasedKeyOnInput(key: string) {
+    const snakeId = this.keysHash()[key];
+    if (!snakeId) return null;
+    return snakeId;
+  }
+
   maxSpeed = this.gameStatus().maxSpeed;
 
   initCanvas(canvas: HTMLCanvasElement) {
@@ -170,12 +195,8 @@ export class SnakeService {
     });
   }
 
-  enqueueSnakeDirection(
-    direction: Direction,
-    snakeID: 'blue' | 'red' | 'green' | 'violet'
-  ) {
+  enqueueSnakeDirection(direction: Direction, snakeID: string) {
     this.gameStatus.update((status) => {
-      console.log(direction)
       const newStatus = { ...status };
       const index = newStatus.snakes.findIndex((s) => s.id === snakeID);
       if (index < 0) {
@@ -203,11 +224,13 @@ export class SnakeService {
     return false;
   }
 
-   externalQueue:string[] = [];
   handleDirectionInput(key: string) {
-    const snakeIndex = this.gameStatus().snakes.findIndex(
-      (s) => !!s.keys[key.toLowerCase()]
-    );
+    const snakeId = this.getSnakeIdBasedKeyOnInput(key.toLowerCase());
+    if (!snakeId) return;
+
+    const snakeIndex = this.gameStatus().snakes.findIndex((s) => {
+      return s.id === snakeId;
+    });
 
     if (snakeIndex < 0) {
       return;
@@ -215,18 +238,16 @@ export class SnakeService {
 
     const snakeKeys = this.gameStatus().snakes[snakeIndex].keys;
     const nextDirection = snakeKeys[key.toLowerCase()];
-    this.externalQueue.unshift(nextDirection);
-  
-    console.log({nextDirection,queue:this.externalQueue})
-    if (
-      this.isInvalidDirection(
-        nextDirection,
-        this.gameStatus().snakes[snakeIndex].currentDirection
-      )
-    ) {
-      return;
-    }
-    const snakeId = this.gameStatus().snakes[snakeIndex].id;
+
+    // if (
+    //   this.isInvalidDirection(
+    //     nextDirection,
+    //     this.gameStatus().snakes[snakeIndex].currentDirection
+    //   )
+    // ) {
+    //   return;
+    // }
+
     this.enqueueSnakeDirection(nextDirection, snakeId);
   }
 
@@ -239,10 +260,23 @@ export class SnakeService {
     if (snake.directionQueue.length <= 0) {
       return snake;
     }
+    const snakeCurrentD = snake.currentDirection;
+    let nextMove: Direction | null = null,
+      nextPossibleMove: Direction | null = null;
+
+    while (snake.directionQueue.length > 0 && !nextMove) {
+      nextPossibleMove = snake.directionQueue.pop()!;
+      if (
+        !this.isInvalidDirection(snakeCurrentD, <Direction>nextPossibleMove)
+      ) {
+        nextMove = nextPossibleMove;
+      }
+    }
+    if (!nextMove) return snake;
+
     const updatedSnake = { ...snake };
-  
-    const newDirection = updatedSnake.directionQueue.pop()!;
-    updatedSnake.currentDirection = newDirection;
+
+    updatedSnake.currentDirection = nextMove;
     return updatedSnake;
   }
 
@@ -389,7 +423,7 @@ export class SnakeService {
       if (speed < status.maxSpeed && speed > 0) {
         status.speed = speed;
       }
-     
+
       return status;
     });
   }
@@ -398,7 +432,7 @@ export class SnakeService {
     if (size < this.gameStatus().minSize || size > this.gameStatus().maxSize) {
       return;
     }
-    
+
     this.gameStatus.update((status) => {
       const updated = { ...status };
       updated.size = size;

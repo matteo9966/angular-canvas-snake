@@ -4,7 +4,7 @@ type SnakeStatus = {
   status: 'play' | 'pause' | 'lost';
   directionQueue: Direction[];
   currentDirection: Direction;
-  id: 'blue' | 'red' | 'green' | 'violet';
+  id: string;
   blocks: SnakeBlock[];
   keys: Record<string, Direction>;
   color: string;
