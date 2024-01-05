@@ -1,0 +1,82 @@
+/* For use in src/lib/core/theming/_palette.scss */
+@use "../themify-components" as tmc;
+@use "../create-mat-theme" as ct;
+@use "../theme-components" as c;
+$femm-palette: (
+    50 : #fdf6f6,
+    100 : #fae9e9,
+    200 : #f7dbdb,
+    300 : #f3cccc,
+    400 : #f1c1c1,
+    500 : #eeb6b6,
+    600 : #ecafaf,
+    700 : #e9a6a6,
+    800 : #e79e9e,
+    900 : #e28e8e,
+    A100 : #ffffff,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #fff7f7,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$femm-accent:(
+    50 : #f6e9ef,
+    100 : #e7c9d7,
+    200 : #d8a5bc,
+    300 : #c881a1,
+    400 : #bc668c,
+    500 : #b04b78,
+    600 : #a94470,
+    700 : #a03b65,
+    800 : #97335b,
+    900 : #872348,
+    A100 : #ffc6da,
+    A200 : #ff93b8,
+    A400 : #ff6097,
+    A700 : #ff4786,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+
+
+$femm-theme: ct.create-material-theme-from-palette(
+  $primary-map: $femm-palette,
+  $accent-map: $femm-accent,
+);
+
+.femm {
+  @include tmc.themify-mat-components($mat-theme: $femm-theme);
+  @include c.theme-components($femm-theme);
+}
+

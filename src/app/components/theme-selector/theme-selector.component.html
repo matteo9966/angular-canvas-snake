@@ -1,0 +1,18 @@
+<mat-form-field [style.width]="'100%'" appearance='outline' >
+  <mat-label>Choose Theme</mat-label>
+  <mat-select (selectionChange)="selectionChange($event)" [value]="selectedTheme">
+    @for(theme of themeList;track theme.label){
+    <mat-option [value]="theme">
+      <div
+        class="theme-item"
+        [style.background]="
+          'linear-gradient(' + theme.primary + ',' + theme.accent
+        "
+        [style.background-clip]="'text'"
+      >
+        <span>{{ theme.label }}</span>
+      </div>
+    </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

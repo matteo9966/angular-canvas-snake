@@ -1,18 +1,19 @@
-<mat-toolbar>
-  <span>Snake</span>
+<mat-toolbar color="primary">
+  <span>{{phase()}}</span>
+
   <span class="spacer"></span>
-  <div class="actions"></div>
-  @if(phase()==='play'){
+  <app-nes-button color="accent" (click)="clickOnPlayPauseBtn(phase())">{{buttonLabel()}}</app-nes-button>
+  <!-- @if(phase()==='play'){
   <button (click)="pauseGame()">PAUSE</button>
   } @else if (phase()==='pause') {
   <button (click)="playGame()">PLAY</button>
 
   }@else if (phase()==='lost') {
   <button (click)="resetGame()">RESTART</button>
-  }
+  } -->
   <button
     mat-icon-button
-    class="example-icon"
+    class="settings-icon"
     aria-label="Example icon-button with share icon"
     (click)="openSettings()"
   >

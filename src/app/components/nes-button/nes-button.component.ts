@@ -9,5 +9,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './nes-button.component.scss',
 })
 export class NesButtonComponent {
-  @Input() color!: 'primary' | 'secondary' | 'warn' | 'error' | 'disabled';
+  @Input() color!: 'primary' | 'accent' | 'warn' | 'disabled';
 }

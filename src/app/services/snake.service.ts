@@ -1,5 +1,11 @@
 import { Injectable, signal, NgZone, inject, computed } from '@angular/core';
-import { GameStatus, Direction, SnakeBlock, SnakeStatus } from '../types/Types';
+import {
+  GameStatus,
+  Direction,
+  SnakeBlock,
+  SnakeStatus,
+  GamePhase,
+} from '../types/Types';
 import { CanvasService } from './canvas.service';
 
 const snakeInitialStatus1: SnakeStatus = {
@@ -10,7 +16,7 @@ const snakeInitialStatus1: SnakeStatus = {
   currentDirection: 'up',
   directionQueue: [],
   id: 'Player1',
-  status: 'lost',
+  status: 'start',
   keys: { a: 'left', w: 'up', s: 'down', d: 'right' },
   color: '#ca51c5',
 };
@@ -23,7 +29,7 @@ const snakeInitailStatus2: SnakeStatus = {
   currentDirection: 'right',
   directionQueue: [],
   id: 'Player2',
-  status: 'lost',
+  status: 'start',
   keys: {
     arrowup: 'up',
     arrowdown: 'down',
@@ -34,27 +40,14 @@ const snakeInitailStatus2: SnakeStatus = {
 };
 
 const initialStatus: GameStatus = {
-  refreshTime: 50,
+  refreshTime: 30,
   speed: 17,
   size: 20,
-  maxSpeed: 20,
+  maxSpeed: 40,
   maxSize: 100,
   minSize: 10,
   maxFruits: 5,
-  snakes: [
-    {
-      blocks: [
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-      ],
-      currentDirection: 'up',
-      directionQueue: [],
-      id: 'Player1',
-      status: 'lost',
-      keys: { a: 'left', w: 'up', s: 'down', d: 'right' },
-      color: '#ca51c5',
-    },
-  ],
+  snakes: [],
   fruits: [],
 };
 
@@ -75,10 +68,12 @@ export class SnakeService {
   lastUpdate = 0;
   canvasSettings = this.canvasService.canvasSettings;
   private gameStatus = signal<GameStatus>(getClonedInitalStatus());
-  gamePhase = computed<'play' | 'pause' | 'lost'>(() => {
+  gamePhase = computed<'play' | 'pause' | 'lost' | 'start'>(() => {
     const statuses = this.gameStatus().snakes.map((s) => s.status);
+    console.log(statuses);
     if (statuses.includes('play')) return 'play';
     if (statuses.includes('pause')) return 'pause';
+    if (statuses.includes('start')) return 'start';
     if (statuses.every((s) => s === 'lost')) return 'lost';
     return 'play';
   });
@@ -134,7 +129,7 @@ export class SnakeService {
     this.gameStatus.update((status) => {
       const snakes = [...status.snakes];
       snakes.forEach((s) => {
-        if (s.status === 'pause') {
+        if (s.status === 'pause' || s.status === 'start') {
           s.status = 'play';
         }
       });
@@ -149,7 +144,10 @@ export class SnakeService {
   }
 
   pauseGame() {
-    this.gameStatus.update((status) => {
+
+    // console.log({status})
+    this.gameStatus.update((s) => {
+      const status = {...s}
       const snakes = [...status.snakes];
       snakes.forEach((s) => {
         if (s.status === 'play') {
@@ -167,21 +165,29 @@ export class SnakeService {
    * @param players
    */
   selectPlayers(players: 1 | 2) {
+    console.log({ players });
     switch (players) {
       case 1:
-        this.gameStatus.update((s) => {
-          s.snakes = [cloneSnakeStatus(snakeInitialStatus1)];
-          return s;
-        });
+        {
+          this.gameStatus.update((status) => {
+            const s = { ...status };
+            s.snakes = [cloneSnakeStatus(snakeInitialStatus1)];
+            console.log(s);
+            return s;
+          });
+        }
         break;
       case 2:
-        this.gameStatus.update((s) => {
-          s.snakes = [
-            cloneSnakeStatus(snakeInitialStatus1),
-            cloneSnakeStatus(snakeInitailStatus2),
-          ];
-          return s;
-        });
+        {
+          this.gameStatus.update((status) => {
+            const s = { ...status };
+            s.snakes = [
+              cloneSnakeStatus(snakeInitialStatus1),
+              cloneSnakeStatus(snakeInitailStatus2),
+            ];
+            return s;
+          });
+        }
         break;
 
       default:
@@ -332,7 +338,7 @@ export class SnakeService {
   moveSnake(
     snake: SnakeBlock[],
     direction: Direction,
-    status: 'play' | 'lost' | 'pause'
+    status: GamePhase
   ): SnakeBlock[] {
     if (status !== 'play') {
       return snake;
@@ -525,7 +531,7 @@ export class SnakeService {
   private _speed = computed(() => this.gameStatus().speed);
 
   private _gameMinMaxSize = computed(() => [
-    this.gameStatus().minSize,
+    this.gameStatus().size, // to avoid errors
     this.gameStatus().maxSize,
   ]);
 

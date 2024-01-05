@@ -1,0 +1,50 @@
+@use "@angular/material" as mat;
+@use "sass:color";
+@use "sass:map";
+
+// this function accepts a material theme, and a palette
+/// @param $theme the theme created from material
+/// @param {'primary'|'accent'|'warn'} $palette palette type
+@function get-palette-from-theme($theme, $palette) {
+    $color-config: mat.get-color-config($theme);
+    $primary: map.get($color-config, "primary");
+    $accent: map.get($color-config, "accent");
+    $warn: map.get($color-config, "warn");
+  
+    @if ($palette == "primary") {
+      @return $primary;
+    } @else if ($palette == "accent") {
+      @return $accent;
+    } @else if ($palette == "warn") {
+      @return $warn;
+    } @else {
+      @error '$palette must be defined (primary,accent or warn)';
+    }
+  }
+  
+  //just returns a map with default: primary accent and warn w. contrast colors 
+  @function get-main-colors-map($theme) {
+    $color-config: mat.get-color-config($theme);
+    $primary: get-palette-from-theme($theme, primary);
+    $accent: get-palette-from-theme($theme, accent);
+    $warn: get-palette-from-theme($theme, warn);
+  
+    $primary-color: mat.get-color-from-palette($primary, default);
+    $primary-contrast-color: mat.get-color-from-palette(
+      $primary,
+      default-contrast
+    );
+    $accent-color: mat.get-color-from-palette($accent, default);
+    $accent-contrast-color: mat.get-color-from-palette($accent, default-contrast);
+    $warn-color: mat.get-color-from-palette($warn, default);
+    $warn-contrast-color: mat.get-color-from-palette($warn, default-contrast);
+  
+    @return (
+      primary: $primary-color,
+      primary-contrast: $primary-contrast-color,
+      accent: $accent-color,
+      accent-contrast: $accent-contrast-color,
+      warn: $warn-color,
+      warn-contrast: $warn-contrast-color
+    );
+  }

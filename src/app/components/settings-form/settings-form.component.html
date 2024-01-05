@@ -1,62 +1,67 @@
 <form #form="ngForm" (ngSubmit)="save()">
-  
-    <div class="input-container">
-      <span class="label"> Speed </span>
-      <mat-slider
-        class="example-margin"
-        [disabled]="false"
-        [max]="maxSpeed"
-        [min]="1"
-        [step]="1"
-        [discrete]="true"
-        [showTickMarks]="true"
-      >
-        <input matSliderThumb name="speed" [(ngModel)]="speed" />
-      </mat-slider>
-    </div>
+  <div>
+    <app-theme-selector
+      [themeList]="themeList"
+      (selected)="selectTheme($event)"
+      [selectedTheme]="selectedTheme"
+    ></app-theme-selector>
+  </div>
+  <div class="input-container">
+    <span class="label"> Speed </span>
+    <mat-slider
+      class="example-margin"
+      [disabled]="false"
+      [max]="maxSpeed"
+      [min]="1"
+      [step]="1"
+      [discrete]="true"
+      [showTickMarks]="true"
+    >
+      <input matSliderThumb name="speed" [(ngModel)]="speed" />
+    </mat-slider>
+  </div>
 
-    <div class="input-container">
-      <span class="label"> Size </span>
-      <mat-slider
-        class="example-margin"
-        [disabled]="false"
-        [max]="gameSizes[1]"
-        [min]="gameSizes[0]"
-        [step]="1"
-        [discrete]="true"
-        [showTickMarks]="true"
-      >
-        <input matSliderThumb name="size" [(ngModel)]="gameSize" />
-      </mat-slider>
+  <div class="input-container">
+    <span class="label"> Size </span>
+    <mat-slider
+      class="example-margin"
+      [disabled]="false"
+      [max]="gameSizes[1]"
+      [min]="gameSizes[0]"
+      [step]="1"
+      [discrete]="true"
+      [showTickMarks]="true"
+    >
+      <input matSliderThumb name="size" [(ngModel)]="gameSize" />
+    </mat-slider>
+  </div>
+  <div class="input-container">
+    <span class="label"> Fruit count </span>
+    <mat-slider
+      class="example-margin"
+      [disabled]="false"
+      [max]="10"
+      [min]="1"
+      [step]="1"
+      [discrete]="true"
+      [showTickMarks]="true"
+    >
+      <input matSliderThumb name="maxFruits" [(ngModel)]="maxFruits" />
+    </mat-slider>
+  </div>
+  <div class="snake-colors">
+    @for( snakeId of snakeIdsAndColors;track snakeId.id){
+    <div class="color-picker" ngModelGroup="snakeColors">
+      <label for="snakeId">{{ snakeId.id }}</label>
+      <input
+        type="color"
+        [id]="snakeId.id"
+        [name]="snakeId.id"
+        [(ngModel)]="snakeId.color"
+      />
     </div>
-    <div class="input-container">
-      <span class="label"> Fruit count </span>
-      <mat-slider
-        class="example-margin"
-        [disabled]="false"
-        [max]="10"
-        [min]="1"
-        [step]="1"
-        [discrete]="true"
-        [showTickMarks]="true"
-      >
-        <input matSliderThumb name="maxFruits" [(ngModel)]="maxFruits" />
-      </mat-slider>
-    </div>
-    <div class="snake-colors">
-      @for( snakeId of snakeIdsAndColors;track snakeId.id){
-      <div class="color-picker" ngModelGroup="snakeColors">
-        <label for="snakeId">{{ snakeId.id }}</label>
-        <input
-          type="color"
-          [id]="snakeId.id"
-          [name]="snakeId.id"
-          [(ngModel)]="snakeId.color"
-        />
-      </div>
-      }
-    </div>
-
+    }
+  </div>
 
   <div class="actions">
     <button type="submit" mat-flat-button color="primary">SAVE CHANGES</button>

@@ -1,3 +1,19 @@
+@use "sass:color";
+// @mixin button-color($classname, $background, $text-color) {
+//   &.#{$classname} {
+//     color: $text-color;
+//     background-color: #209cee;
+
+//     &::after {
+//       box-shadow: inset -4px -4px color.scale($background, $lightness: -30%);
+//     }
+
+//     &:active::after {
+//       box-shadow: inset 4px 4px color.scale($background, $lightness: -30%);
+//     }
+//   }
+// }
+
 .nes-btn {
   border-image-slice: 2;
   border-image-width: 2;
@@ -10,16 +26,13 @@
   margin: 4px;
   text-align: center;
   vertical-align: middle;
-  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
-      14 0,
-    pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  color: #212529;
-  background-color: #fff;
+  // color: #212529;
   border-style: solid;
+  // background-color: #fff;
   border-width: 4px;
 
   &::after {
@@ -29,81 +42,16 @@
     bottom: -4px;
     left: -4px;
     content: "";
-    box-shadow: inset -4px -4px #adafbc;
+    // box-shadow: inset -4px -4px #adafbc;
   }
 
-  &.primary {
-    color: #fff;
-    background-color: #209cee;
-
-    &::after {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      bottom: -4px;
-      left: -4px;
-      content: "";
-      box-shadow: inset -4px -4px #006bb3;
-    }
-  }
-
-  &.success {
-    color: #fff;
-    background-color: #209cee;
-
-    &::after {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      bottom: -4px;
-      left: -4px;
-      content: "";
-      box-shadow: inset -4px -4px #4aa52e;
-    }
-  }
-
-  &.warining {
-    color: #212529;
-    background-color: #f7d51d;
-    &::after {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      bottom: -4px;
-      left: -4px;
-      content: "";
-      box-shadow: inset -4px -4px #e59400;
-    }
-  }
-
-  &.error {
-    color: #fff;
-    background-color: #e76e55;
-    &::after {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      bottom: -4px;
-      left: -4px;
-      content: "";
-      box-shadow: inset -4px -4px #8c2022;
-    }
-  }
-
+  // @include button-color(primary, #209cee, #fff);
+  // @include button-color(success, #4aa52e, #fff);
+  // @include button-color(warining, #f7d51d, #212529);
+  // @include button-color(error, #e76e55, #fff);
+  // @include button-color(disabled, #d3d3d3, #212529);
   &.disabled {
-    color: #212529;
-    cursor: not-allowed;
-    background-color: #d3d3d3;
-    box-shadow: inset -4px -4px #adafbc;
     opacity: 0.6;
-    &::after {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      bottom: -4px;
-      left: -4px;
-      content: "";
-      box-shadow: inset -4px -4px #adafbc;
-    }
+    cursor: not-allowed;
   }
 }

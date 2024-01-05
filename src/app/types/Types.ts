@@ -1,7 +1,8 @@
 type SnakeBlock = { x: number; y: number };
 type Direction = 'up' | 'down' | 'left' | 'right';
+type GamePhase = 'play' | 'pause' | 'lost'|'start';
 type SnakeStatus = {
-  status: 'play' | 'pause' | 'lost';
+  status: GamePhase;
   directionQueue: Direction[];
   currentDirection: Direction;
   id: string;
@@ -21,4 +22,4 @@ type GameStatus = {
   maxFruits: number;
 };
 
-export { Direction, GameStatus, SnakeBlock, SnakeStatus };
+export { Direction, GameStatus, SnakeBlock, SnakeStatus,GamePhase };

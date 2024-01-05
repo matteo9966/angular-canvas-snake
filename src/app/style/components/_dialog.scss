@@ -1,0 +1,31 @@
+@use "sass:color";
+@use "sass:map";
+
+
+@use '../utils/theming' as th;
+/// theming of dialog.component.html
+/// 
+@mixin modal-dialog($theme){
+
+    $color-map: th.get-main-colors-map($theme);
+    $primary-color: map.get($color-map, "primary");
+    $primary-contrast-color: map.get($color-map, "primary-contrast");
+    $accent-color: map.get($color-map, "accent");
+    $accent-contrast-color: map.get($color-map, "accent-contrast");
+    $warn-color: map.get($color-map, "warn");
+    $warn-contrast-color: map.get($color-map, "warn-contrast");
+     
+    .modal-dialog-colors{
+
+        // $is-dark:map.get($theme,'color','is-dark');
+        // @debug $is-dark;
+        
+        //se è un tema dark fallo molto più scuro
+        //se è un tema più chiaro fallo molto più light
+
+        background: color.scale($accent-color, $lightness: 30%);;
+
+    
+    }
+
+}

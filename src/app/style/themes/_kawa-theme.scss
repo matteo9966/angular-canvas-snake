@@ -1,0 +1,84 @@
+/* For use in src/lib/core/theming/_palette.scss */
+@use "../themify-components" as tmc;
+@use "../create-mat-theme" as ct;
+@use "../theme-components" as c;
+$kawa-palette: (
+    50 : #e5f9e7,
+    100 : #bff0c4,
+    200 : #95e79d,
+    300 : #6add76,
+    400 : #4ad558,
+    500 : #2ace3b,
+    600 : #25c935,
+    700 : #1fc22d,
+    800 : #19bc26,
+    900 : #0fb019,
+    A100 : #dfffe0,
+    A200 : #acffaf,
+    A400 : #79ff7f,
+    A700 : #5fff66,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+
+$kawa-accent:(
+    50 : #e7e3f7,
+    100 : #c4b8ea,
+    200 : #9d89dd,
+    300 : #7559cf,
+    400 : #5836c4,
+    500 : #3a12ba,
+    600 : #3410b3,
+    700 : #2c0dab,
+    800 : #250aa3,
+    900 : #180594,
+    A100 : #c6c0ff,
+    A200 : #978dff,
+    A400 : #695aff,
+    A700 : #5241ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+
+
+
+$kawa-theme: ct.create-material-theme-from-palette(
+  $primary-map: $kawa-palette,
+  $accent-map: $kawa-accent,
+);
+
+.kawa {
+  @include tmc.themify-mat-components($mat-theme: $kawa-theme);
+  @include c.theme-components($kawa-theme);
+}
+

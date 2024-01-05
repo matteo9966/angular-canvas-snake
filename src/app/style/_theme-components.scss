@@ -1,0 +1,6 @@
+@use "./components/nes-button" as nes;
+@use "./components/dialog" as d;
+@mixin theme-components($theme) {
+  @include nes.nes-button($theme);
+  @include d.modal-dialog($theme);
+}

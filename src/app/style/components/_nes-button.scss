@@ -1,0 +1,40 @@
+@use "sass:color";
+@use "sass:map";
+
+@use '../utils/theming' as th;
+
+@mixin button-color($classname, $background, $text-color) {
+  &.#{$classname} {
+    color: $text-color;
+    background-color: $background;
+
+    &::after {
+      box-shadow: inset -4px -4px color.scale($background, $lightness: -30%);
+    }
+
+    &:active::after {
+      box-shadow: inset 4px 4px color.scale($background, $lightness: -30%);
+    }
+  }
+}
+
+
+@mixin nes-button($theme) {
+  $color-map: th.get-main-colors-map($theme);
+  $primary-color: map.get($color-map, "primary");
+  $primary-contrast-color: map.get($color-map, "primary-contrast");
+  $accent-color: map.get($color-map, "accent");
+  $accent-contrast-color: map.get($color-map, "accent-contrast");
+  $warn-color: map.get($color-map, "warn");
+  $warn-contrast-color: map.get($color-map, "warn-contrast");
+
+
+  .nes-btn {
+    @include button-color(primary, $primary-color, $primary-contrast-color);
+    @include button-color(accent, $accent-color, $accent-contrast-color);
+    @include button-color(warn, $warn-color, $warn-contrast-color);
+    @include button-color(disabled, #d3d3d3, #212529);
+  }
+}
+
+
