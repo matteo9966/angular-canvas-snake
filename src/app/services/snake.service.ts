@@ -1,10 +1,19 @@
-import { Injectable, signal, NgZone, inject, computed } from '@angular/core';
+import {
+  Injectable,
+  signal,
+  NgZone,
+  inject,
+  computed,
+  effect,
+  ChangeDetectorRef,
+} from '@angular/core';
 import {
   GameStatus,
   Direction,
   SnakeBlock,
   SnakeStatus,
   GamePhase,
+  FruitBlock,
 } from '../types/Types';
 import { CanvasService } from './canvas.service';
 
@@ -19,6 +28,7 @@ const snakeInitialStatus1: SnakeStatus = {
   status: 'start',
   keys: { a: 'left', w: 'up', s: 'down', d: 'right' },
   color: '#ca51c5',
+  points: 0,
 };
 
 const snakeInitailStatus2: SnakeStatus = {
@@ -37,6 +47,7 @@ const snakeInitailStatus2: SnakeStatus = {
     arrowright: 'right',
   },
   color: '#3f51b5',
+  points: 0,
 };
 
 const initialStatus: GameStatus = {
@@ -49,6 +60,7 @@ const initialStatus: GameStatus = {
   maxFruits: 5,
   snakes: [],
   fruits: [],
+  checkSelfCollisions: true,
 };
 
 function getClonedInitalStatus() {
@@ -62,6 +74,7 @@ function cloneSnakeStatus(snake: SnakeStatus) {
   providedIn: 'root',
 })
 export class SnakeService {
+  gameComponentDetectionRef!: ChangeDetectorRef;
   animationFrameId: number | null = null;
   zone = inject(NgZone);
   private canvasService = inject(CanvasService);
@@ -70,7 +83,7 @@ export class SnakeService {
   private gameStatus = signal<GameStatus>(getClonedInitalStatus());
   gamePhase = computed<'play' | 'pause' | 'lost' | 'start'>(() => {
     const statuses = this.gameStatus().snakes.map((s) => s.status);
-    console.log(statuses);
+
     if (statuses.includes('play')) return 'play';
     if (statuses.includes('pause')) return 'pause';
     if (statuses.includes('start')) return 'start';
@@ -109,7 +122,11 @@ export class SnakeService {
     this.canvasService.initCanvas(canvas);
   }
 
-  constructor() {}
+  constructor() {
+    // effect(()=>{
+    //   // console.log(this.gameStatus());
+    // })
+  }
 
   resetGame() {
     this.resetStatus();
@@ -144,10 +161,9 @@ export class SnakeService {
   }
 
   pauseGame() {
-
     // console.log({status})
     this.gameStatus.update((s) => {
-      const status = {...s}
+      const status = { ...s };
       const snakes = [...status.snakes];
       snakes.forEach((s) => {
         if (s.status === 'play') {
@@ -165,14 +181,13 @@ export class SnakeService {
    * @param players
    */
   selectPlayers(players: 1 | 2) {
-    console.log({ players });
     switch (players) {
       case 1:
         {
           this.gameStatus.update((status) => {
             const s = { ...status };
             s.snakes = [cloneSnakeStatus(snakeInitialStatus1)];
-            console.log(s);
+
             return s;
           });
         }
@@ -195,9 +210,43 @@ export class SnakeService {
     }
   }
 
-  resetStatus() {
-    this.gameStatus.set(initialStatus);
+  createSnakesList(players: number) {
+    const snakeArray = [];
+    switch (players) {
+      case 1:
+        snakeArray.push(cloneSnakeStatus(snakeInitialStatus1));
+        break;
+      case 2:
+        {
+          snakeArray.push(
+            cloneSnakeStatus(snakeInitialStatus1),
+            cloneSnakeStatus(snakeInitailStatus2)
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
+    return snakeArray;
   }
+
+  resetStatus() {
+    const newStatus = { ...initialStatus };
+    newStatus.maxFruits = this.gameStatus().maxFruits;
+    newStatus.maxSize = this.gameStatus().size;
+    newStatus.refreshTime = this.gameStatus().refreshTime;
+    newStatus.snakes = this.createSnakesList(this.gameStatus().snakes.length);
+    newStatus.speed = this.gameStatus().speed;
+    newStatus.snakes.forEach(
+      //mantain color
+      (s, i) => (s.color = this.gameStatus().snakes[i].color)
+    );
+    newStatus.checkSelfCollisions = this.gameStatus().checkSelfCollisions;
+    this.gameStatus.set(newStatus);
+  }
+
+  playersSelected = computed(() => this.gameStatus().snakes.length > 0);
 
   animate(timestamp: number) {
     if (
@@ -205,10 +254,12 @@ export class SnakeService {
       this.gameStatus().refreshTime *
         Math.max(1, this.gameStatus().maxSpeed - this.gameStatus().speed)
     ) {
-      this.lastUpdate = timestamp;
-      this.canvasService.draw(this.gameStatus());
-      this.updateSnakesStatusPositions();
-      this.updateFruitsGameStatus();
+      this.zone.run(() => {
+        this.lastUpdate = timestamp;
+        this.canvasService.draw(this.gameStatus());
+        this.updateSnakesStatusPositions();
+        this.updateFruitsGameStatus();
+      });
     }
 
     this.zone.runOutsideAngular(() => {
@@ -220,22 +271,28 @@ export class SnakeService {
    */
   updateSnakesStatusPositions() {
     this.gameStatus.update((currentStatus) => {
-      const newStatus = { ...currentStatus };
+      const newStatus = { ...currentStatus, snakes: [...currentStatus.snakes] };
       let fruits = [...currentStatus.fruits];
       newStatus.snakes = newStatus.snakes.map((snake) => {
         if (snake.status !== 'play') return snake;
-        const updatedSnake = this.updateSnakeCurrentDirection(snake);
+        const updatedSnake = this.updateSnakeCurrentDirection({ ...snake });
+        const selfCollided =
+          newStatus.checkSelfCollisions &&
+          this.checkIfSnakeSelfCollided(updatedSnake.blocks);
+        if (selfCollided) {
+          updatedSnake.status = 'lost';
+        }
         const fruitEaten = this.checkIfSnakeAteFruit(
           updatedSnake.blocks,
           currentStatus.fruits
         );
         if (fruitEaten) {
+          updatedSnake.points += fruitEaten.points;
           fruits = this.removeFruit(fruitEaten, fruits);
-          //dont shift so snake can grow
         } else {
           updatedSnake.blocks.shift();
         }
-        //check if snake eats itself
+
         return {
           ...updatedSnake,
           blocks: this.moveSnake(
@@ -327,9 +384,8 @@ export class SnakeService {
         nextMove = nextPossibleMove;
       }
     }
-    if (!nextMove) return snake;
-
     const updatedSnake = { ...snake };
+    if (!nextMove) return updatedSnake;
 
     updatedSnake.currentDirection = nextMove;
     return updatedSnake;
@@ -402,7 +458,7 @@ export class SnakeService {
     };
   }
 
-  createFruit() {
+  createFruit(): FruitBlock | null {
     const MAX_ATTEMPTS = 200;
     let attempt = 0,
       x = -1,
@@ -429,7 +485,7 @@ export class SnakeService {
       }
       attempt++;
     }
-    return { x, y };
+    return { x, y, points: 1 }; //TODO: add different point values
   }
 
   collisionWithSnake(block: SnakeBlock, snakeBlocks: SnakeBlock[]) {
@@ -448,7 +504,10 @@ export class SnakeService {
     });
   }
 
-  checkIfSnakeAteFruit(snake: SnakeBlock[], fruits: SnakeBlock[]) {
+  checkIfSnakeAteFruit(
+    snake: SnakeBlock[],
+    fruits: FruitBlock[]
+  ): FruitBlock | null {
     for (let fruit of fruits) {
       if (this.collisionWithSnake(fruit, snake)) {
         return fruit;
@@ -457,10 +516,21 @@ export class SnakeService {
     return null;
   }
 
+  checkIfSnakeSelfCollided(snake: SnakeBlock[]) {
+    const set = new Set();
+    for (let block of snake) {
+      if (set.has(`${block.x}${block.y}`)) {
+        return true;
+      }
+      set.add(`${block.x}${block.y}`);
+    }
+    return false;
+  }
+
   removeFruit(
-    fruitToRemove: SnakeBlock,
-    currentFruits: SnakeBlock[]
-  ): SnakeBlock[] {
+    fruitToRemove: FruitBlock,
+    currentFruits: FruitBlock[]
+  ): FruitBlock[] {
     const fruitIndex = currentFruits.findIndex(
       (fruit) => fruit.x === fruitToRemove.x && fruit.y === fruitToRemove.y
     );
@@ -525,7 +595,17 @@ export class SnakeService {
     });
   }
 
-  private _snakes = computed(() => this.gameStatus().snakes);
+  updateSelfCollisions(check: boolean) {
+    this.gameStatus.update((s) => {
+      const updated = { ...s };
+      updated.checkSelfCollisions = check;
+      return updated;
+    });
+  }
+
+  snakes = computed(() => {
+    return this.gameStatus().snakes;
+  });
   private _gameSize = computed(() => this.gameStatus().size);
   private _maxFruits = computed(() => this.gameStatus().maxFruits);
   private _speed = computed(() => this.gameStatus().speed);
@@ -539,10 +619,6 @@ export class SnakeService {
     return this._maxFruits();
   }
 
-  get snakes() {
-    return this._snakes();
-  }
-
   get gameSize() {
     return this._gameSize();
   }
@@ -551,6 +627,10 @@ export class SnakeService {
   }
   get speed() {
     return this._speed();
+  }
+
+  get checkSelfCollisions() {
+    return this.gameStatus().checkSelfCollisions;
   }
 }
 

@@ -3,7 +3,18 @@
     display: flex;
     justify-content: center;
     padding-top: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap:10px;
 }
 canvas{
+    // border:1px solid purple;
+    height: 700px;
+    width: 700px;
+}
+.canvas-colors{
+    $color1:'white';
+    $color2:'purple';
     border:1px solid purple;
+    background: linear-gradient(#e66465, #9198e5);;
 }

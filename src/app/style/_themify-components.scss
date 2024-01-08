@@ -26,9 +26,11 @@
         @include mat.tabs-theme($mat-theme);
         @include mat.checkbox-theme($mat-theme);
         @include mat.tooltip-theme($mat-theme);
+        @include mat.slide-toggle-theme($mat-theme);
      
       } @else {
         @include mat.tooltip-color($mat-theme);
+        @include mat.slider-color($mat-theme);
         @include mat.checkbox-color($mat-theme);
         @include mat.tabs-color($mat-theme);
         @include mat.autocomplete-color($mat-theme);
@@ -47,5 +49,6 @@
         @include mat.expansion-color($mat-theme);
         @include mat.button-toggle-color($mat-theme);
         @include mat.table-color($mat-theme);
+        @include mat.slide-toggle-color($mat-theme);
       }
 }

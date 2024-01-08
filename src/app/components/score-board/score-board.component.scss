@@ -1,0 +1,28 @@
+.scoreboard-container {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  border: 4px solid black;
+}
+
+.player-name {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scoreboard-container{
+    &.colors{
+      border-color: black;
+      color: black;
+      background: white;
+    }
+
+}

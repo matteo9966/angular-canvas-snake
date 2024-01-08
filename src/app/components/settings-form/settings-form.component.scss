@@ -5,12 +5,15 @@
 form {
   width: 100%;
   padding: 2rem;
+  display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .input-container {
   width: 100%;
   display: grid;
-  grid-template-columns: 100px 1fr;
+  grid-template-columns: 300px 1fr;
   align-items: center;
 }
 
@@ -23,9 +26,7 @@ mat-slider {
   display: flex;
   gap: 20px;
   align-items: center;
-  label {
-    width: 100px;
-  }
+ 
   input{
     display: block;
     width: 40px;

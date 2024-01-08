@@ -1,6 +1,7 @@
 type SnakeBlock = { x: number; y: number };
 type Direction = 'up' | 'down' | 'left' | 'right';
 type GamePhase = 'play' | 'pause' | 'lost'|'start';
+type FruitBlock = SnakeBlock & {points:number};
 type SnakeStatus = {
   status: GamePhase;
   directionQueue: Direction[];
@@ -9,6 +10,7 @@ type SnakeStatus = {
   blocks: SnakeBlock[];
   keys: Record<string, Direction>;
   color: string;
+  points:number;
 };
 type GameStatus = {
   maxSize: number;
@@ -18,8 +20,9 @@ type GameStatus = {
   speed: number;
   maxSpeed: number;
   snakes: SnakeStatus[];
-  fruits: { x: number; y: number }[];
+  fruits: FruitBlock[];
   maxFruits: number;
+  checkSelfCollisions:boolean;
 };
 
-export { Direction, GameStatus, SnakeBlock, SnakeStatus,GamePhase };
+export { Direction, GameStatus, SnakeBlock, SnakeStatus,GamePhase,FruitBlock };

@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ThemeSelectorComponent } from '../theme-selector/theme-selector.component';
 import { ThemifyService } from 'src/app/services/themify.service';
 import { Theme } from '../types/themes';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 type SettingsForm = {
   speed: number;
   snakeColors: Record<string, string>;
@@ -34,6 +35,7 @@ type SettingsForm = {
     ColorPickerComponent,
     MatButtonModule,
     ThemeSelectorComponent,
+    MatSlideToggleModule,
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss',
@@ -47,6 +49,7 @@ export class SettingsFormComponent implements OnInit, OnDestroy, AfterViewInit {
   gameSize = this.snakeService.gameSize;
   maxFruits = this.snakeService.maxFruits;
   speed = this.snakeService.speed;
+  checkCollision = this.snakeService.checkSelfCollisions;
 
   @Output() clickedAction = new EventEmitter<boolean>();
 
@@ -83,6 +86,7 @@ export class SettingsFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateSnakeColors();
     this.updateMaxFruits();
     this.updateGameSize();
+    this.updateSelfCollisionDetection();
     this.clickedAction.emit(true);
   }
 
@@ -108,12 +112,16 @@ export class SettingsFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.snakeService.updateGameSize(this.formValue().size);
   }
 
+  updateSelfCollisionDetection() {
+    this.snakeService.updateSelfCollisions(this.checkCollision);
+  }
+
   get snakeIds() {
-    return this.snakes.map((s) => s.id);
+    return this.snakes().map((s) => s.id);
   }
 
   get snakeIdsAndColors() {
-    return this.snakes.map((s) => ({ id: s.id, color: s.color }));
+    return this.snakes().map((s) => ({ id: s.id, color: s.color }));
   }
 
   get themeList() {
@@ -122,6 +130,12 @@ export class SettingsFormComponent implements OnInit, OnDestroy, AfterViewInit {
   get selectedTheme() {
     return this.themifyService.selectedTheme;
   }
+
+  get selfCollisionLabel() {
+    if (this.checkCollision) return 'Check collisions';
+    else return "Don't check collisions";
+  }
+
   selectTheme(theme: Theme) {
     this.themifyService.selectTheme(theme.label);
   }

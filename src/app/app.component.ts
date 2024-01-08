@@ -5,6 +5,7 @@ import { SnakeGameComponent } from './components/snake-game/snake-game.component
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SettingsFormComponent } from './components/settings-form/settings-form.component';
 import { ThemeSelectorComponent } from './components/theme-selector/theme-selector.component';
+import { ScoreBoardComponent } from './components/score-board/score-board.component';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { ThemeSelectorComponent } from './components/theme-selector/theme-select
     NavbarComponent,
     SettingsFormComponent,
     ThemeSelectorComponent,
+    ScoreBoardComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

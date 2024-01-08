@@ -1,0 +1,9 @@
+<div class="scoreboard-container colors">
+  @for(score of playersScores;track score.name){
+  <div class="player-card">
+    <span class="player-name"> {{ score.name }} </span>
+    <span class="points">{{ score.points }}</span>
+  </div>
+
+  }
+</div>
