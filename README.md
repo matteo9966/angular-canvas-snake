@@ -1,27 +1,41 @@
 # CanvasSnake
+---
+### A multiplayer version of snake created using html canvas
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.5.
+---
+## Tutorial
+Choose 1 or 2 players 
 
-## Development server
+![image](https://github.com/matteo9966/angular-canvas-snake/assets/75813215/c9a779da-679d-479d-b483-b30e065de1da)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+commands for the players are
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### PLAYER 1 
+|KEYBOARD KEY | SNAKE DIRECTION|
+|-------------|---------------|
+| **W** | ↑ |
+| **S** | ↓ |
+| **D**  | → |
+| **A** | ← |
 
-## Build
+### PLAYER 2 
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+|KEYBOARD KEY | SNAKE DIRECTION|
+|-------------|---------------|
+| **ARROW UP** | ↑ |
+| **ARROW DOWN** | ↓ |
+| **ARROW RIGHT**  | → |
+| **ARROW LEFT** | ← |
 
-## Running unit tests
+#### GAME
+![image](https://github.com/matteo9966/angular-canvas-snake/assets/75813215/c7340b66-a3eb-40f8-913c-9e43969a7f03)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### The game has various settings
 
-## Running end-to-end tests
+![image](https://github.com/matteo9966/angular-canvas-snake/assets/75813215/e94e1252-3285-49c2-96a2-52393dd5de8c)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Most settings are self explenatory. 
 
-## Further help
+- Detect self collision: if a snake collides with its self it dies
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
