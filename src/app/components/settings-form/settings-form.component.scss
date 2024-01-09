@@ -6,8 +6,8 @@ form {
   width: 100%;
   padding: 2rem;
   display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .input-container {
@@ -19,15 +19,14 @@ form {
 
 mat-slider {
   width: 100%;
-  
 }
 
 .color-picker {
   display: flex;
   gap: 20px;
   align-items: center;
- 
-  input{
+
+  input {
     display: block;
     width: 40px;
     height: 40px;
@@ -40,8 +39,22 @@ mat-slider {
   gap: 20px;
 }
 
-.actions{
-    display: flex;
-    margin-top: 100px;
-    gap:10px;
+.actions {
+  display: flex;
+  margin-top: 100px;
+  gap: 10px;
+}
+
+.danger-zone {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .info{
+    font-size: 10px;
+    font-weight: bold;
+  }
+
 }

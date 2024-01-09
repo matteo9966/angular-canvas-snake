@@ -1,0 +1,22 @@
+@use "sass:color";
+@use "sass:map";
+
+@use "../utils/theming" as th;
+/// theming of dialog.component.html
+///
+@mixin snake-canvas($theme) {
+  $color-map: th.get-main-colors-map($theme);
+  $primary-color: map.get($color-map, "primary");
+  $primary-contrast-color: map.get($color-map, "primary-contrast");
+  $accent-color: map.get($color-map, "accent");
+  $accent-contrast-color: map.get($color-map, "accent-contrast");
+  $warn-color: map.get($color-map, "warn");
+  $warn-contrast-color: map.get($color-map, "warn-contrast");
+
+  .canvas-colors {
+    $color1: $primary-color;
+    $color2: $accent-color;
+    border: 1px solid $primary-contrast-color;
+    background: linear-gradient($color1, $color2);
+  }
+}

@@ -61,6 +61,7 @@ export class NavbarComponent {
     }
    
   }
+  playersSelected = this.snakeService.playersSelected
 
   private playGame() {
     this.snakeService.playGame();

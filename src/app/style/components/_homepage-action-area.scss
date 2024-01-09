@@ -1,0 +1,23 @@
+@use "sass:color";
+@use "sass:map";
+
+@use "../utils/theming" as th;
+/// theming of dialog.component.html
+///
+@mixin homepage-action-area($theme) {
+  $color-map: th.get-main-colors-map($theme);
+  $primary-color: map.get($color-map, "primary");
+  $accent-color: map.get($color-map, "accent");
+  $primary-contrast: map.get($color-map, "primary-contrast");
+
+  $color1: color.scale($primary-color, $alpha: -30%);
+  $color2: color.scale($accent-color, $alpha: -30%);
+
+  .action-area.action-area-colors {
+    background: linear-gradient(0deg, $color1 0%, $color2 100%);
+  }
+
+  .action-area .title {
+    color: $primary-contrast;
+  }
+}

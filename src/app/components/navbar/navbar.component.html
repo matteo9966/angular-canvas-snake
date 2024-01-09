@@ -1,16 +1,13 @@
 <mat-toolbar color="primary">
-  <span>{{phase()}}</span>
+  <span>Snake Canvas</span>
 
   <span class="spacer"></span>
-  <app-nes-button color="accent" (click)="clickOnPlayPauseBtn(phase())">{{buttonLabel()}}</app-nes-button>
-  <!-- @if(phase()==='play'){
-  <button (click)="pauseGame()">PAUSE</button>
-  } @else if (phase()==='pause') {
-  <button (click)="playGame()">PLAY</button>
+@if(playersSelected()){
 
-  }@else if (phase()==='lost') {
-  <button (click)="resetGame()">RESTART</button>
-  } -->
+  <app-nes-button color="accent" (click)="clickOnPlayPauseBtn(phase())">{{
+    buttonLabel()
+  }}</app-nes-button>
+
   <button
     mat-icon-button
     class="settings-icon"
@@ -19,4 +16,5 @@
   >
     <mat-icon>settings</mat-icon>
   </button>
+  }
 </mat-toolbar>

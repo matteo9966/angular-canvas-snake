@@ -19,6 +19,7 @@ import { ThemeSelectorComponent } from '../theme-selector/theme-selector.compone
 import { ThemifyService } from 'src/app/services/themify.service';
 import { Theme } from '../types/themes';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NesButtonComponent } from '../nes-button/nes-button.component';
 type SettingsForm = {
   speed: number;
   snakeColors: Record<string, string>;
@@ -36,6 +37,7 @@ type SettingsForm = {
     MatButtonModule,
     ThemeSelectorComponent,
     MatSlideToggleModule,
+    NesButtonComponent
   ],
   templateUrl: './settings-form.component.html',
   styleUrl: './settings-form.component.scss',
@@ -72,13 +74,13 @@ export class SettingsFormComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('form', { static: true, read: NgForm }) form!: NgForm;
 
   ngOnInit() {
-    this.form.form.patchValue(
-      {
-        speed: 10,
-        snakeColors: { blue: 'blue', violet: 'violet' },
-      },
-      { emitEvent: true }
-    );
+    // this.form.form.patchValue(
+    //   {
+    //     speed: 10,
+    //     snakeColors: { blue: 'blue', violet: 'violet' },
+    //   },
+    //   { emitEvent: true }
+    // );
   }
 
   save() {
@@ -138,5 +140,15 @@ export class SettingsFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   selectTheme(theme: Theme) {
     this.themifyService.selectTheme(theme.label);
+  }
+
+  restoreDefaultSettings(){
+    const newSettings = this.snakeService.resetInitialSettings();
+    this.speed=newSettings.speed;
+    this.gameSizes = [newSettings.size,newSettings.maxSize]
+    this.gameSize = newSettings.size
+    this.maxFruits = newSettings.maxFruits
+    this.checkCollision = newSettings.checkSelfCollisions
+    
   }
 }

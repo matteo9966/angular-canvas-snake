@@ -142,6 +142,15 @@ export class SnakeService {
     this.animationFrameId = requestAnimationFrame((ts) => this.animate(ts));
   }
 
+  resetInitialSettings() {
+    this.animationFrameId && cancelAnimationFrame(this.animationFrameId);
+    const newStatus = { ...initialStatus };
+    newStatus.snakes = this.createSnakesList(this.gameStatus().snakes.length);
+    this.canvasService.updateSettings(newStatus.size);
+    this.gameStatus.set(newStatus);
+    return newStatus
+  }
+
   playGame() {
     this.gameStatus.update((status) => {
       const snakes = [...status.snakes];
@@ -545,11 +554,12 @@ export class SnakeService {
 
   updateGameSpeed(speed: number) {
     this.gameStatus.update((status) => {
+      const newStatus = { ...status };
       if (speed <= status.maxSpeed && speed > 0) {
-        status.speed = speed;
+        newStatus.speed = speed;
       }
 
-      return status;
+      return newStatus;
     });
   }
 

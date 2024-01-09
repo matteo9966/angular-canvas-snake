@@ -76,11 +76,14 @@
     </div>
     }
   </div>
-
+<div class="danger-zone">
+  <app-nes-button color="warn" (click)="restoreDefaultSettings()" type="button">RESTORE DEFAULT SETTINGS</app-nes-button>
+  <span class="info">Restoring default settings will also restart the game</span>
+</div>
   <div class="actions">
-    <button type="submit" mat-flat-button color="primary">SAVE CHANGES</button>
-    <button type="button" (click)="cancel()" mat-flat-button color="warn">
+    <app-nes-button type="submit" color="primary">SAVE CHANGES</app-nes-button>
+    <app-nes-button type="button" (click)="cancel()" mat-flat-app-nes-button color="warn">
       CANCEL
-    </button>
+    </app-nes-button>
   </div>
 </form>

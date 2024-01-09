@@ -10,4 +10,5 @@ import { Component, Input } from '@angular/core';
 })
 export class NesButtonComponent {
   @Input() color!: 'primary' | 'accent' | 'warn' | 'disabled';
+  @Input() type:'button'|'submit'='button';
 }

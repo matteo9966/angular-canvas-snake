@@ -1,6 +1,10 @@
 @use "./components/nes-button" as nes;
 @use "./components/dialog" as d;
+@use "./components/homepage-action-area" as hp;
+@use "./components/canvas" as c;
 @mixin theme-components($theme) {
   @include nes.nes-button($theme);
   @include d.modal-dialog($theme);
+  @include hp.homepage-action-area($theme);
+  @include c.snake-canvas($theme);
 }
