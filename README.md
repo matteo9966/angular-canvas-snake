@@ -39,3 +39,8 @@ Most settings are self explenatory.
 
 - Detect self collision: if a snake collides with its self it dies
 
+## Theming
+This app offers varios themings you can choose from
+- it uses angular material theming system
+![image](https://github.com/matteo9966/angular-canvas-snake/assets/75813215/bf288b7a-ac87-446c-b8c6-7d6b2ecaea60)
+
