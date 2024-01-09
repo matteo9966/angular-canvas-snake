@@ -10,6 +10,7 @@ import { SettingsDialogComponent } from '../settings-dialog/settings-dialog.comp
 import { ThemeSelectorComponent } from '../theme-selector/theme-selector.component';
 import { NesButtonComponent } from '../nes-button/nes-button.component';
 import { GamePhase } from 'src/app/types/Types';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -21,11 +22,16 @@ import { GamePhase } from 'src/app/types/Types';
     DialogModule,
     ThemeSelectorComponent,
     NesButtonComponent,
+   
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
+  router = inject(Router);
+  get isGamePage(){
+    return this.router.url.includes('game');
+  }
   snakeService = inject(SnakeService);
   phase = this.snakeService.gamePhase;
   dialog = inject(Dialog);

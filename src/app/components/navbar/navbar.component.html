@@ -2,7 +2,7 @@
   <span>Snake Canvas</span>
 
   <span class="spacer"></span>
-@if(playersSelected()){
+@if(playersSelected() && isGamePage){
 
   <app-nes-button color="accent" (click)="clickOnPlayPauseBtn(phase())">{{
     buttonLabel()
