@@ -1,6 +1,11 @@
 # CanvasSnake
 ---
 ### A multiplayer version of snake created using html canvas
+---
+
+YOU CAN CHECK IT OUT AT:
+
+https://matteo9966.github.io/angular-canvas-snake/home
 
 ---
 ## Tutorial
